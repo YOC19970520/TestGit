@@ -1,0 +1,75 @@
+package com.example.demo;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class FindClasses {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        String rawStudents = s.nextLine();
+        String[] students = rawStudents.split(" ");
+        // 输入不符合要求的时候，输出ERROR
+        // 数据大于999时，输出ERROR
+        if (students.length > 999){
+            System.out.println("ERROR");
+            return;
+        }
+        List<Integer> classA = new ArrayList<>();// 班级A
+        List<Integer> classB = new ArrayList<>();// 班级B
+        List<Integer> classC = new ArrayList<>();// 临时班级
+        for (int i = 0; i < students.length; i++) {
+            String student = students[i];
+            String[] studentInfos = student.split("/");
+            int studentNum = Integer.parseInt(studentInfos[0]);// 学生编号(字符串转换成十进制的数字)
+            // 学生编号小于等于0以及学生编号大于999 都需要输出EROR
+            if (studentNum > 999 || studentNum<=0){
+                System.out.println("ERROR");
+                return;
+            }
+            String studentFlag = studentInfos[1];// 学生班级标识
+            // 学生编号不等于Y和N也需要输出ERROR
+            if (!studentFlag.equals("Y") && !studentFlag.equals("N")){
+                System.out.println("ERROR");
+                return;
+            }
+            // 解决第一个学生的所属的班级
+            if (classC.equals(null)){
+                classC = classA;
+                classC.add(studentNum);
+                continue;
+            }
+            // 如果学生标识为Y，直接添加到当前临时班级
+            if (studentFlag.equals("Y")){
+                classC.add(studentNum);
+            }else if (studentFlag.equals("N")){// 如果学生表示为N，将临时班级改为另外一个班级
+                // 判断当前班级是否是A班级，如果是A班级，将C改为B。添加该学生编号
+                if (classC == classA){
+                    classC = classB;
+                    classC.add(studentNum);
+                }else{// 判断当前班级是否是A班级，如果是A班级，将C改为A。添加该学生编号
+                    classC = classA;
+                    classC.add(studentNum);
+                }
+            }else {
+                System.out.println("ERROR");
+                return;
+            }
+        }
+        Collections.sort(classA);
+        Collections.sort(classB);
+        // 打印前判断是否集合是否为空,如果为空，打印“ERROR”
+        if (classA.isEmpty() && classB.isEmpty()){
+            System.out.println("ERROR");
+            return;
+        }
+        for (int i = 0; i < classA.size(); i++) {
+            System.out.print(classA.get(i) + " ");
+        }
+        System.out.println();
+        for (int i = 0; i < classB.size(); i++) {
+            System.out.print(classB.get(i) + " ");
+        }
+    }
+}
